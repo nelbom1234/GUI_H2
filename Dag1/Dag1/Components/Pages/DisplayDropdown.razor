@@ -1,0 +1,29 @@
+﻿@using Dag1.Components.Pages.Tables
+@using Dag1.Infrastructure
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DbpDag1Context> DbFactory
+
+<EnumInput TEnum="Tables" @bind-Value="@_selectedValue" @bind-Value:after="StateHasChanged"></EnumInput>
+
+@if (SelectedEnum == Tables.Author)
+{
+    <AuthorTable />
+}
+
+@code {
+
+    private int _selectedValue = 0;
+
+    private Tables SelectedEnum => (Tables)_selectedValue;
+    
+    private enum Tables
+    {
+        Author,
+        Books,
+        Bookshelf,
+        Format,
+        Genre,
+        Publisher,
+        User
+    }
+}

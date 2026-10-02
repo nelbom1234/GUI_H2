@@ -1,0 +1,25 @@
+﻿@using Dag1.Infrastructure
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DbpDag1Context> DbFactory
+
+<div>
+    Authors
+</div>
+
+<Grid TItem="Author" 
+      Class="table table-hover table-bordered table-striped"
+      Data="DataProvider()">
+    <GridColumns>
+        <GridColumn TItem="Author" HeaderText="Name">@context.Author1</GridColumn>
+        <GridColumn TItem="Author" HeaderText="Nationality">@context.Nationality</GridColumn>
+    </GridColumns>
+</Grid>
+
+@code {
+    private IEnumerable<Author> DataProvider()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        return context.Authors;
+    }
+}
