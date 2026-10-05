@@ -2,13 +2,9 @@
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<DbpDag1Context> DbFactory
 
-<div>
-    Authors
-</div>
-
-<Grid TItem="Author" 
-      Class="table table-hover table-bordered table-striped"
-      Data="DataProvider()">
+<Grid TItem="Author"
+      Class="table table-bordered table-striped"
+      Data="Data">
     <GridColumns>
         <GridColumn TItem="Author" HeaderText="Name">@context.Author1</GridColumn>
         <GridColumn TItem="Author" HeaderText="Nationality">@context.Nationality</GridColumn>
@@ -16,10 +12,18 @@
 </Grid>
 
 @code {
-    private IEnumerable<Author> DataProvider()
+    protected override void OnInitialized()
+    {
+        Data = DataProvider();
+        
+        base.OnInitialized();
+    }
+
+    private List<Author> Data { get; set; } = new List<Author>();
+    
+    private List<Author> DataProvider()
     {
         using var context = DbFactory.CreateDbContext();
-
-        return context.Authors;
+        return context.Authors.ToList();
     }
 }

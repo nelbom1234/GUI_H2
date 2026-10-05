@@ -3,18 +3,66 @@
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<DbpDag1Context> DbFactory
 
-<EnumInput TEnum="Tables" @bind-Value="@_selectedValue" @bind-Value:after="StateHasChanged"></EnumInput>
+<EnumInput TEnum="Tables" Class="mb-2" @Value="@_selectedValue" ValueChanged="OnValueChanged"></EnumInput>
 
 @if (SelectedEnum == Tables.Author)
 {
     <AuthorTable />
 }
 
+@if (SelectedEnum == Tables.Books)
+{
+    <BookTable />
+}
+
+@if (SelectedEnum == Tables.Bookshelf)
+{
+    <BookshelfTable />
+}
+
+@if (SelectedEnum == Tables.Format)
+{
+    <FormatTable />
+}
+
+@if (SelectedEnum == Tables.Genre)
+{
+    <GenreTable />
+}
+
+@if (SelectedEnum == Tables.Publisher)
+{
+    <PublisherTable />
+}
+
+@if (SelectedEnum == Tables.User)
+{
+    <UserTable />
+}
+
 @code {
+    protected override void OnInitialized()
+    {
+        SetSelectedEnum();
+        
+        base.OnInitialized();
+    }
 
-    private int _selectedValue = 0;
+    private int _selectedValue = (int)Tables.Author;
 
-    private Tables SelectedEnum => (Tables)_selectedValue;
+    private Tables SelectedEnum { get; set; }
+
+    private void SetSelectedEnum()
+    {
+        SelectedEnum = (Tables)_selectedValue;
+    }
+
+    private void OnValueChanged(int value)
+    {
+        _selectedValue = value;
+        
+        SetSelectedEnum();
+    }
     
     private enum Tables
     {

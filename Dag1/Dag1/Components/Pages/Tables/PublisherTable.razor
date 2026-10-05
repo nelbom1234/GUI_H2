@@ -1,5 +1,30 @@
-﻿<h3>PublisherTable</h3>
+﻿@using Dag1.Infrastructure
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DbpDag1Context> DbFactory
+
+<Grid TItem="Publisher"
+      Class="table table-bordered table-striped"
+      Data="Data">
+    <GridColumns>
+        <GridColumn TItem="Publisher" HeaderText="Name">@context.Publisher1</GridColumn>
+        <GridColumn TItem="Publisher" HeaderText="Country">@context.Country</GridColumn>
+    </GridColumns>
+</Grid>
 
 @code {
-    
+    protected override void OnInitialized()
+    {
+        Data = DataProvider();
+        
+        base.OnInitialized();
+    }
+
+    private List<Publisher> Data { get; set; } = new();
+
+    private List<Publisher> DataProvider()
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Publishers
+            .ToList();
+    }
 }

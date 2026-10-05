@@ -1,5 +1,30 @@
-﻿<h3>FormatTable</h3>
+﻿@using Dag1.Infrastructure
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DbpDag1Context> DbFactory
+
+<Grid TItem="Format"
+      Class="table table-bordered table-striped"
+      Data="Data">
+    <GridColumns>
+        <GridColumn TItem="Format" HeaderText="Id">@context.FormatId</GridColumn>
+        <GridColumn TItem="Format" HeaderText="Name">@context.Name</GridColumn>
+    </GridColumns>
+</Grid>
 
 @code {
-    
+    protected override void OnInitialized()
+    {
+        Data = DataProvider();
+        
+        base.OnInitialized();
+    }
+
+    private List<Format> Data { get; set; } = new();
+
+    private List<Format> DataProvider()
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Formats
+            .ToList();
+    }
 }

@@ -1,5 +1,30 @@
-﻿<h3>GenreTable</h3>
+﻿@using Dag1.Infrastructure
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DbpDag1Context> DbFactory
+
+<Grid TItem="Genre"
+      Class="table table-bordered table-striped"
+      Data="Data">
+    <GridColumns>
+        <GridColumn TItem="Genre" HeaderText="Id">@context.GenreId</GridColumn>
+        <GridColumn TItem="Genre" HeaderText="Name">@context.Name</GridColumn>
+    </GridColumns>
+</Grid>
 
 @code {
-    
+    protected override void OnInitialized()
+    {
+        Data = DataProvider();
+        
+        base.OnInitialized();
+    }
+
+    private List<Genre> Data { get; set; } = new();
+
+    private List<Genre> DataProvider()
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Genres
+            .ToList();
+    }
 }

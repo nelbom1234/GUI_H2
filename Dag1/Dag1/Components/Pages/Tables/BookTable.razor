@@ -1,5 +1,34 @@
-﻿<h3>BookTable</h3>
+﻿@using Dag1.Infrastructure
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DbpDag1Context> DbFactory
+
+<Grid TItem="Book"
+      Class="table table-bordered table-striped"
+      Data="Data">
+    <GridColumns>
+        <GridColumn TItem="Book" HeaderText="ISBN">@context.Isbn</GridColumn>
+        <GridColumn TItem="Book" HeaderText="Title">@context.Title</GridColumn>
+        <GridColumn TItem="Book" HeaderText="Author">@context.Author</GridColumn>
+        <GridColumn TItem="Book" HeaderText="Publisher">@context.Publisher</GridColumn>
+        <GridColumn TItem="Book" HeaderText="Genre">@context.Genre.Name</GridColumn>
+    </GridColumns>
+</Grid>
 
 @code {
-    
+    protected override void OnInitialized()
+    {
+        Data = DataProvider();
+        
+        base.OnInitialized();
+    }
+
+    private List<Book> Data { get; set; } = new();
+
+    private List<Book> DataProvider()
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Books
+            .Include(p => p.Genre)
+            .ToList();
+    }
 }

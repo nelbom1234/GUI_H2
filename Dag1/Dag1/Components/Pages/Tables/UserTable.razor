@@ -1,5 +1,31 @@
-﻿<h3>UserTable</h3>
+﻿@using Dag1.Infrastructure
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DbpDag1Context> DbFactory
+
+<Grid TItem="User"
+      Class="table table-bordered table-striped"
+      Data="Data">
+    <GridColumns>
+        <GridColumn TItem="User" HeaderText="Id">@context.UserId</GridColumn>
+        <GridColumn TItem="User" HeaderText="Name">@context.Name</GridColumn>
+        <GridColumn Titem="User" HeaderText="Email">@context.Email</GridColumn>
+    </GridColumns>
+</Grid>
 
 @code {
-    
+    protected override void OnInitialized()
+    {
+        Data = DataProvider();
+        
+        base.OnInitialized();
+    }
+
+    private List<User> Data { get; set; } = new();
+
+    private List<User> DataProvider()
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Users
+            .ToList();
+    }
 }
