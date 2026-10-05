@@ -1,0 +1,2 @@
+Jeg bruger event-handling igennem diverse knapper med en onclick-event der enten sletter et element, gemmer elementet eller opretter et nyt element i tabellen.
+I min løsning har jeg brugt en Master-Detail løsning. Man vælger en tabel i dropdown -> den viser en tabel med detaljer omkring hvad der er i den tabel. Det er også her at man kan udføre diverse handlinger omkring elementer der tilhører det man har valgt.

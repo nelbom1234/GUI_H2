@@ -1,0 +1,77 @@
+﻿@using Dag1.Infrastructure
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DbpDag1Context> DbFactory
+@rendermode InteractiveServer
+
+<h3>Database service</h3>
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>Table</th>
+        <th>Row count</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th>Authors</th>
+        <th>@_authorCount</th>
+    </tr>
+    <tr>
+        <th>Bookshelves</th>
+        <th>@_bookshelfCount</th>
+    </tr>
+    <tr>
+        <th>Books</th>
+        <th>@_bookCount</th>
+    </tr>
+    <tr>
+        <th>Formats</th>
+        <th>@_formatCount</th>
+    </tr>
+    <tr>
+        <th>Genres</th>
+        <th>@_genreCount</th>
+    </tr>
+    <tr>
+        <th>Publishers</th>
+        <th>@_publisherCount</th>
+    </tr>
+    <tr>
+        <th>Users</th>
+        <th>@_userCount</th>
+    </tr>
+    </tbody>
+</table>
+
+
+@code {
+    private int _authorCount = 0;
+    private int _bookCount = 0;
+    private int _bookshelfCount = 0;
+    private int _formatCount = 0;
+    private int _genreCount = 0;
+    private int _publisherCount = 0;
+    private int _userCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateCounts();
+        
+        await base.OnInitializedAsync();
+    }
+
+    public async Task UpdateCounts()
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+
+        _authorCount = context.Authors.Count();
+        _bookCount = context.Books.Count();
+        _bookshelfCount = context.Bookshelves.Count();
+        _formatCount = context.Formats.Count();
+        _genreCount = context.Genres.Count();
+        _publisherCount = context.Publishers.Count();
+        _userCount = context.Users.Count();
+
+        StateHasChanged();
+    }
+}

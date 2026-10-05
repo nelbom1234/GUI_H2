@@ -7,40 +7,43 @@
 
 @if (SelectedEnum == Tables.Author)
 {
-    <AuthorTable />
+    <AuthorTable UpdateDatabaseService="UpdateDatabaseService" />
 }
 
 @if (SelectedEnum == Tables.Books)
 {
-    <BookTable />
+    <BookTable UpdateDatabaseService="UpdateDatabaseService" />
 }
 
 @if (SelectedEnum == Tables.Bookshelf)
 {
-    <BookshelfTable />
+    <BookshelfTable UpdateDatabaseService="UpdateDatabaseService" />
 }
 
 @if (SelectedEnum == Tables.Format)
 {
-    <FormatTable />
+    <FormatTable UpdateDatabaseService="UpdateDatabaseService" />
 }
 
 @if (SelectedEnum == Tables.Genre)
 {
-    <GenreTable />
+    <GenreTable UpdateDatabaseService="UpdateDatabaseService" />
 }
 
 @if (SelectedEnum == Tables.Publisher)
 {
-    <PublisherTable />
+    <PublisherTable UpdateDatabaseService="UpdateDatabaseService" />
 }
 
 @if (SelectedEnum == Tables.User)
 {
-    <UserTable />
+    <UserTable UpdateDatabaseService="UpdateDatabaseService" />
 }
 
 @code {
+    [Parameter, EditorRequired]
+    public EventCallback UpdateDatabaseService { get; set; }
+    
     protected override void OnInitialized()
     {
         SetSelectedEnum();
@@ -48,7 +51,7 @@
         base.OnInitialized();
     }
 
-    private int _selectedValue = (int)Tables.Author;
+    private int _selectedValue = (int)Tables.Choose;
 
     private Tables SelectedEnum { get; set; }
 
@@ -66,6 +69,7 @@
     
     private enum Tables
     {
+        Choose,
         Author,
         Books,
         Bookshelf,

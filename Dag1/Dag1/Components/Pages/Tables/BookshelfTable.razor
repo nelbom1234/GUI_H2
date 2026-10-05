@@ -24,6 +24,9 @@
         base.OnInitialized();
     }
 
+    [Parameter, EditorRequired]
+    public EventCallback UpdateDatabaseService { get; set; }
+    
     private List<Bookshelf> Data { get; set; } = new();
 
     private List<Bookshelf> DataProvider()
@@ -41,7 +44,8 @@
 
         context.Bookshelves.Remove(item);
         await context.SaveChangesAsync();
-
+        await  UpdateDatabaseService.InvokeAsync();
+        
         Data = DataProvider();
     }
     
@@ -57,6 +61,7 @@
             context.Bookshelves.Add(item);
         }
         await context.SaveChangesAsync();
+        await  UpdateDatabaseService.InvokeAsync();
         
         Data = DataProvider();
     }

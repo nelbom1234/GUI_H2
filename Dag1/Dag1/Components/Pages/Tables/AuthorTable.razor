@@ -22,6 +22,9 @@
         base.OnInitialized();
     }
 
+    [Parameter, EditorRequired]
+    public EventCallback UpdateDatabaseService { get; set; }
+    
     private List<Author> Data { get; set; } = new List<Author>();
     
     private List<Author> DataProvider()
@@ -36,6 +39,7 @@
         
         context.Authors.Remove(element);
         await context.SaveChangesAsync();
+        await UpdateDatabaseService.InvokeAsync();
 
         Data = DataProvider();
     }
@@ -52,6 +56,7 @@
             context.Authors.Add(item);
         }
         await context.SaveChangesAsync();
+        await UpdateDatabaseService.InvokeAsync();
         
         Data = DataProvider();
     }

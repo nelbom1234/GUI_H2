@@ -22,6 +22,9 @@
         base.OnInitialized();
     }
 
+    [Parameter, EditorRequired]
+    public EventCallback UpdateDatabaseService { get; set; }
+    
     private List<Genre> Data { get; set; } = new();
 
     private List<Genre> DataProvider()
@@ -37,7 +40,8 @@
 
         context.Genres.Remove(item);
         await context.SaveChangesAsync();
-
+        await  UpdateDatabaseService.InvokeAsync();
+        
         Data = DataProvider();
     }
     
@@ -53,6 +57,7 @@
             context.Genres.Add(item);
         }
         await context.SaveChangesAsync();
+        await  UpdateDatabaseService.InvokeAsync();
         
         Data = DataProvider();
     }

@@ -29,7 +29,8 @@
             <hr />
             <div class="row">
                 <div class="col">
-                    <DisplayDropdown />
+                    <DisplayDropdown UpdateDatabaseService="UpdateDatabaseService"/>
+                    <DatabaseService @ref="_databaseService"/>
                 </div>
             </div>
             
@@ -39,4 +40,11 @@
 
 @code {
     private string Language = "Dansk";
+
+    private DatabaseService _databaseService = null!;
+
+    public async Task UpdateDatabaseService()
+    {
+        await _databaseService.UpdateCounts();
+    }
 }
