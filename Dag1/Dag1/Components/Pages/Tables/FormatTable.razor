@@ -5,9 +5,12 @@
 <Grid TItem="Format"
       Class="table table-bordered table-striped"
       Data="Data">
+    <Button Color="ButtonColor.Primary" Class="mb-2" @onclick="() => Data.Add(new Format())">Add new</Button>
     <GridColumns>
         <GridColumn TItem="Format" HeaderText="Id">@context.FormatId</GridColumn>
-        <GridColumn TItem="Format" HeaderText="Name">@context.Name</GridColumn>
+        <GridColumn TItem="Format" HeaderText="Name"><TextInput @bind-Value="@context.Name" /></GridColumn>
+        <GridColumn TItem="Format" HeaderText="Delete"><Button @onclick="() => DeleteElement(context)"><Icon Name="IconName.Trash" /></Button></GridColumn>
+        <GridColumn TItem="Format" HeaderText="Save"><Button @onclick="() => SaveElement(context)"><Icon Name="IconName.Save" /></Button></GridColumn>
     </GridColumns>
 </Grid>
 
@@ -26,5 +29,31 @@
         using var context = DbFactory.CreateDbContext();
         return context.Formats
             .ToList();
+    }
+    
+    private async Task DeleteElement(Format item)
+    {
+        await using var context  = await DbFactory.CreateDbContextAsync();
+
+        context.Formats.Remove(item);
+        await context.SaveChangesAsync();
+
+        Data = DataProvider();
+    }
+    
+    private async Task SaveElement(Format item)
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+        if (context.Formats.Contains(item))
+        {
+            context.Formats.Update(item);
+        }
+        else
+        {
+            context.Formats.Add(item);
+        }
+        await context.SaveChangesAsync();
+        
+        Data = DataProvider();
     }
 }

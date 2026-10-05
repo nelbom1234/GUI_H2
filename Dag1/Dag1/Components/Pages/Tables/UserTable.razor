@@ -5,10 +5,13 @@
 <Grid TItem="User"
       Class="table table-bordered table-striped"
       Data="Data">
+    <Button Color="ButtonColor.Primary" Class="mb-2" @onclick="() => Data.Add(new User())">Add new</Button>
     <GridColumns>
         <GridColumn TItem="User" HeaderText="Id">@context.UserId</GridColumn>
-        <GridColumn TItem="User" HeaderText="Name">@context.Name</GridColumn>
-        <GridColumn Titem="User" HeaderText="Email">@context.Email</GridColumn>
+        <GridColumn TItem="User" HeaderText="Name"><TextInput @bind-Value="@context.Name" /></GridColumn>
+        <GridColumn Titem="User" HeaderText="Email"><TextInput @bind-Value="@context.Email" /></GridColumn>
+        <GridColumn TItem="User" HeaderText="Delete"><Button @onclick="() => DeleteElement(context)"><Icon Name="IconName.Trash" /></Button></GridColumn>
+        <GridColumn TItem="User" HeaderText="Save"><Button @onclick="() => SaveElement(context)"><Icon Name="IconName.Save" /></Button></GridColumn>
     </GridColumns>
 </Grid>
 
@@ -27,5 +30,31 @@
         using var context = DbFactory.CreateDbContext();
         return context.Users
             .ToList();
+    }
+    
+    private async Task DeleteElement(User item)
+    {
+        await using var context  = await DbFactory.CreateDbContextAsync();
+
+        context.Users.Remove(item);
+        await context.SaveChangesAsync();
+
+        Data = DataProvider();
+    }
+
+    private async Task SaveElement(User item)
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+        if (context.Users.Contains(item))
+        {
+            context.Users.Update(item);
+        }
+        else
+        {
+            context.Users.Add(item);
+        }
+        await context.SaveChangesAsync();
+        
+        Data = DataProvider();
     }
 }

@@ -5,9 +5,12 @@
 <Grid TItem="Publisher"
       Class="table table-bordered table-striped"
       Data="Data">
+    <Button Color="ButtonColor.Primary" Class="mb-2" @onclick="() => Data.Add(new Publisher())">Add new</Button>
     <GridColumns>
         <GridColumn TItem="Publisher" HeaderText="Name">@context.Publisher1</GridColumn>
-        <GridColumn TItem="Publisher" HeaderText="Country">@context.Country</GridColumn>
+        <GridColumn TItem="Publisher" HeaderText="Country"><TextInput @bind-Value="@context.Country" /></GridColumn>
+        <GridColumn TItem="Publisher" HeaderText="Delete"><Button @onclick="() => DeleteElement(context)"><Icon Name="IconName.Trash" /></Button></GridColumn>
+        <GridColumn TItem="Publisher" HeaderText="Save"><Button @onclick="() => SaveElement(context)"><Icon Name="IconName.Save" /></Button></GridColumn>
     </GridColumns>
 </Grid>
 
@@ -26,5 +29,31 @@
         using var context = DbFactory.CreateDbContext();
         return context.Publishers
             .ToList();
+    }
+    
+    private async Task DeleteElement(Publisher item)
+    {
+        await using var context  = await DbFactory.CreateDbContextAsync();
+
+        context.Publishers.Remove(item);
+        await context.SaveChangesAsync();
+
+        Data = DataProvider();
+    }
+    
+    private async Task SaveElement(Publisher item)
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+        if (context.Publishers.Contains(item))
+        {
+            context.Publishers.Update(item);
+        }
+        else
+        {
+            context.Publishers.Add(item);
+        }
+        await context.SaveChangesAsync();
+        
+        Data = DataProvider();
     }
 }

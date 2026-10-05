@@ -5,9 +5,12 @@
 <Grid TItem="Genre"
       Class="table table-bordered table-striped"
       Data="Data">
+    <Button Color="ButtonColor.Primary" Class="mb-2" @onclick="() => Data.Add(new Genre())">Add new</Button>
     <GridColumns>
         <GridColumn TItem="Genre" HeaderText="Id">@context.GenreId</GridColumn>
-        <GridColumn TItem="Genre" HeaderText="Name">@context.Name</GridColumn>
+        <GridColumn TItem="Genre" HeaderText="Name"><TextInput @bind-Value="@context.Name" /></GridColumn>
+        <GridColumn TItem="Genre" HeaderText="Delete"><Button @onclick="() => DeleteElement(context)"><Icon Name="IconName.Trash" /></Button></GridColumn>
+        <GridColumn TItem="Genre" HeaderText="Save"><Button @onclick="() => SaveElement(context)"><Icon Name="IconName.Save" /></Button></GridColumn>
     </GridColumns>
 </Grid>
 
@@ -26,5 +29,31 @@
         using var context = DbFactory.CreateDbContext();
         return context.Genres
             .ToList();
+    }
+    
+    private async Task DeleteElement(Genre item)
+    {
+        await using var context  = await DbFactory.CreateDbContextAsync();
+
+        context.Genres.Remove(item);
+        await context.SaveChangesAsync();
+
+        Data = DataProvider();
+    }
+    
+    private async Task SaveElement(Genre item)
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+        if (context.Genres.Contains(item))
+        {
+            context.Genres.Update(item);
+        }
+        else
+        {
+            context.Genres.Add(item);
+        }
+        await context.SaveChangesAsync();
+        
+        Data = DataProvider();
     }
 }

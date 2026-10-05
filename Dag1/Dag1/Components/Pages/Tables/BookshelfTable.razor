@@ -5,11 +5,14 @@
 <Grid TItem="Bookshelf"
       Class="table table-bordered table-striped"
       Data="Data">
+    <Button Color="ButtonColor.Primary" Class="mb-2" @onclick="() => Data.Add(new Bookshelf())">Add new</Button>
     <GridColumns>
         <GridColumn TItem="Bookshelf" HeaderText="Id">@context.BookId</GridColumn>
         <GridColumn TItem="Bookshelf" HeaderText="ISBN">@context.Isbn</GridColumn>
         <GridColumn TItem="Bookshelf" HeaderText="Format">@context.Format?.Name</GridColumn>
         <GridColumn TItem="Bookshelf" HeaderText="Borrowed by">@context.BorrowedByNavigation?.Name</GridColumn>
+        <GridColumn TItem="Bookshelf" HeaderText="Delete"><Button @onclick="() => DeleteElement(context)"><Icon Name="IconName.Trash"/></Button></GridColumn>
+        <GridColumn TItem="Bookshelf" HeaderText="Save"><Button @onclick="() => SaveElement(context)"><Icon Name="IconName.Save"/></Button></GridColumn>
     </GridColumns>
 </Grid>
 
@@ -30,5 +33,31 @@
             .Include(p => p.Format)
             .Include(p => p.BorrowedByNavigation)
             .ToList();
+    }
+
+    private async Task DeleteElement(Bookshelf item)
+    {
+        await using var context  = await DbFactory.CreateDbContextAsync();
+
+        context.Bookshelves.Remove(item);
+        await context.SaveChangesAsync();
+
+        Data = DataProvider();
+    }
+    
+    private async Task SaveElement(Bookshelf item)
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+        if (context.Bookshelves.Contains(item))
+        {
+            context.Bookshelves.Update(item);
+        }
+        else
+        {
+            context.Bookshelves.Add(item);
+        }
+        await context.SaveChangesAsync();
+        
+        Data = DataProvider();
     }
 }

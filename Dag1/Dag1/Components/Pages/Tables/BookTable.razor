@@ -5,12 +5,15 @@
 <Grid TItem="Book"
       Class="table table-bordered table-striped"
       Data="Data">
+    <Button Color="ButtonColor.Primary" Class="mb-2" @onclick="() => Data.Add(new Book())">Add new</Button>
     <GridColumns>
         <GridColumn TItem="Book" HeaderText="ISBN">@context.Isbn</GridColumn>
-        <GridColumn TItem="Book" HeaderText="Title">@context.Title</GridColumn>
+        <GridColumn TItem="Book" HeaderText="Title"><TextInput @bind-Value="@context.Title"/></GridColumn>
         <GridColumn TItem="Book" HeaderText="Author">@context.Author</GridColumn>
         <GridColumn TItem="Book" HeaderText="Publisher">@context.Publisher</GridColumn>
         <GridColumn TItem="Book" HeaderText="Genre">@context.Genre.Name</GridColumn>
+        <GridColumn TItem="Book" HeaderText="Delete"><Button @onclick="() => DeleteElement(context)"><Icon Name="IconName.Trash"/></Button></GridColumn>
+        <GridColumn TItem="Book" HeaderText="Save"><Button @onclick="() => SaveElement(context)"><Icon Name="IconName.Save"/></Button></GridColumn>
     </GridColumns>
 </Grid>
 
@@ -30,5 +33,31 @@
         return context.Books
             .Include(p => p.Genre)
             .ToList();
+    }
+    
+    private async Task DeleteElement(Book item)
+    {
+        await using var context  = await DbFactory.CreateDbContextAsync();
+
+        context.Books.Remove(item);
+        await context.SaveChangesAsync();
+
+        Data = DataProvider();
+    }
+    
+    private async Task SaveElement(Book item)
+    {
+        await using var context = await DbFactory.CreateDbContextAsync();
+        if (context.Books.Contains(item))
+        {
+            context.Books.Update(item);
+        }
+        else
+        {
+            context.Books.Add(item);
+        }
+        await context.SaveChangesAsync();
+        
+        Data = DataProvider();
     }
 }
